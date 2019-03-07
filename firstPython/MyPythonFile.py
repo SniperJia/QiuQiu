@@ -11,4 +11,7 @@ def fristpython():
             print "Bad"
             i = i + 1
 
+def gitpush():
+    print "will push"
+
 fristpython()
