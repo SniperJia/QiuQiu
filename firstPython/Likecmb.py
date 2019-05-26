@@ -67,10 +67,10 @@ def getBDPgroup():
     first_group = result_data[0]['group_list']
     parent_group_name =  first_group[0]['group_name']
     parent_group_id =  first_group[0]['group_id']
-    if parent_group_name == 'haizhi':
-       # print parent_group_id
-	return parent_group_id , result_data
-    return "ERROR"
+    if len(result_data)  == 1:
+	    return   result_data
+    else:
+        return exit(0)
 
 
 
@@ -104,25 +104,39 @@ def createBDPuser():
 
     print requests.post("http://114.115.244.30:2470/api/v2/user/create", data=data).content
 
-
-
 def getParentgroup():
     sql = "select f_group , s_group , t_group  from user_group group by f_group , s_group , t_group"
-    f_grouplist = []
-    s_grouplist = []
-    t_grouplist = []
+    grouplist = []
     for raw in selectgroup(sql):
-        #sql = "select %s from user_group" % s_group
-        #print createuser() , raw
-        if raw[0] not in f_grouplist:
-            f_grouplist.append(raw[0])
-        if raw[1] not in s_grouplist:
-            s_grouplist.append(raw[1])
-        if raw[2] not in t_grouplist:
-            t_grouplist.append(raw[2])
-    # print s_grouplist
-    # print t_grouplist
-    # print f_grouplist
-    print getBDPgroup()
+        grouplist.append(raw)
+    return grouplist
 
-getParentgroup()
+groupinfo_list = []
+all_group_info_list = []
+def getGrouplist(group  ):
+    for a in group:
+        if a.get('group_list', ''):
+            getGrouplist(a['group_list'] )
+            print a.get('group_name', '') , a.get('group_id', '') ,a.get('parent_group_id','')
+            groupinfo_list.append(a.get('group_id', ''))
+            groupinfo_list.append(a.get('group_name', ''))
+            groupinfo_list.append(a.get('parent_group_id', ''))
+
+        else:
+            print a.get('group_name', ''), a.get('group_id', ''), a.get('parent_group_id', '')
+        groupinfo_list.append(a.get('group_id', ''))
+        groupinfo_list.append(a.get('group_name', ''))
+        groupinfo_list.append(a.get('parent_group_id', ''))
+    all_group_info_list.append(groupinfo_list)
+
+
+
+def checkGrouplist(striterm):
+    strjson =   getBDPgroup()
+    getGrouplist(strjson )
+    print len(groupinfo_list)
+    print len(all_group_info_list)
+
+
+
+print checkGrouplist('312')
